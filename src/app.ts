@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import router from './routes';
 import { errorHandler } from './middlewares/errorHandler';
+import { getCategory } from './controllers/category.controller';
 
 const app = express();
 app.use(express.json());
@@ -15,7 +16,6 @@ app.get('/', (req, res) => {
   res.send('<h1>Hello, Please visit /api/v1 to get started</h1>');
 });
 app.use('/api/v1', router)
-
 
 app.use(errorHandler);
 export default app;

@@ -24,4 +24,8 @@ export const getProduct = expressAsyncHandler(async (req, res) => {
         data: product,
         message: 'Product fetched successfully',
     }));
+});
+
+export const createProduct = expressAsyncHandler(async (req, res) => {
+    const { title, price, category, description, image } = req.body;
 })

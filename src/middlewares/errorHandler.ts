@@ -6,7 +6,9 @@ export const errorHandler = ((err: ApiError, req: Request, res: Response, next: 
         return next(err);
     }
     res.status(err.statusCode || 500).json({
-        success: false,
+        ...err,
         message: err.message,
-    })
+        success: err.success,
+        errors: err.errors,
+    });
 })

@@ -13,9 +13,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id      String      @id @default(uuid())
-  email   String   @unique
-  name    String?
+  id    String  @id @default(uuid())
+  email String  @unique
+  name  String?
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  price       Decimal  @default(0)
+  category    Category @relation(fields: [categoryID], references: [id])
+  categoryID  String
+  image       String?
+}
+
+model Category {
+  id       String    @id @default(uuid())
+  name     String
+  products Product[]
 }

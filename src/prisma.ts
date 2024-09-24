@@ -4,8 +4,12 @@ export const prisma = new PrismaClient()
 
 async function main() {
   // ... you will write your Prisma Client queries here
-  const allUsers = await prisma.user.findMany()
-  console.log(allUsers);
+  // const allUsers = await prisma.category.findUnique({
+  //   where: {
+  //     id: '25be4544-8dfe-4149-93a5-f159d70a76bb',
+  //   }
+  // })
+  // console.log(allUsers,"all users");
 }
 
 main()
