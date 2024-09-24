@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import router from './routes';
+import { errorHandler } from './middlewares/errorHandler';
 
 const app = express();
 app.use(express.json());
@@ -15,4 +16,6 @@ app.get('/', (req, res) => {
 });
 app.use('/api/v1', router)
 
+
+app.use(errorHandler);
 export default app;
