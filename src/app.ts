@@ -2,10 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import router from './routes';
 import { errorHandler } from './middlewares/errorHandler';
-import { getCategory } from './controllers/category.controller';
+import bodyParser from 'body-parser';
 
 const app = express();
 app.use(express.json());
+app.use(bodyParser.json());
 app.use(cors({ origin: '*' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));

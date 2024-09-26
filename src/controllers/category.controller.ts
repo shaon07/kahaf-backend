@@ -3,14 +3,11 @@ import { prisma } from "../prisma";
 import ApiError from "../utils/ApiError";
 import ApiResponse from "../utils/ApiResponse";
 import { Request, Response } from "express";
+import { categoryService } from "../services/category.service";
 
 export const getCategories = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const categories = await prisma.category.findMany();
-
-    if (categories?.length <= 0) {
-      throw new ApiError({ message: "Categories not found", statusCode: 404 });
-    }
+    const categories = await categoryService.getCategories();
 
     res.status(200).json(
       new ApiResponse({
@@ -24,15 +21,7 @@ export const getCategories = expressAsyncHandler(
 export const getCategory = expressAsyncHandler(
   async (req: Request, res: Response) => {
     const id = req.params.id;
-    const category = await prisma.category.findUnique({
-      where: {
-        id,
-      },
-    });
-
-    if (!category) {
-      throw new ApiError({ message: "Category not found", statusCode: 404 });
-    }
+    const category = await categoryService.getCategory(id);
 
     res.status(200).json(
       new ApiResponse({
@@ -46,20 +35,7 @@ export const getCategory = expressAsyncHandler(
 export const createCategory = expressAsyncHandler(
   async (req: Request, res: Response) => {
     const { name } = req.body;
-
-    if (!name) {
-      throw new ApiError({ message: "Name is required", statusCode: 400 });
-    }
-
-    const category = await prisma.category.create({
-      data: {
-        name,
-      },
-    });
-
-    if (!category) {
-      throw new ApiError({ message: "Category not created", statusCode: 400 });
-    }
+    const category = await categoryService.createCategory({ name });
 
     res.status(200).json(
       new ApiResponse({
@@ -79,20 +55,7 @@ export const updateCategory = expressAsyncHandler(
       throw new ApiError({ message: "Id is required", statusCode: 400 });
     }
 
-    if (!name) {
-      throw new ApiError({ message: "Name is required", statusCode: 400 });
-    }
-
-    const category = await prisma.category.update({
-      where: { id },
-      data: {
-        name,
-      },
-    });
-
-    if (!category?.name) {
-      throw new ApiError({ message: "Category not updated", statusCode: 400 });
-    }
+    const category = await categoryService.updateCategory(id, { name });
 
     res.status(200).json(
       new ApiResponse({
@@ -107,20 +70,7 @@ export const deleteCategory = expressAsyncHandler(
   async (req: Request, res: Response) => {
     const id = req.params.id;
 
-    if (!id) {
-      throw new ApiError({ message: "Id is required", statusCode: 400 });
-    }
-
-    const category = await prisma.category
-      .delete({
-        where: { id },
-      })
-      .catch((err) => {
-        throw new ApiError({
-          message: err.meta.cause,
-          statusCode: 400,
-        });
-      });
+    const category = await categoryService.deleteCategory(id);
 
     res.status(202).json(
       new ApiResponse({
