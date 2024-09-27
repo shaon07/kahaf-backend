@@ -1,5 +1,4 @@
 import { StatusCodes } from "http-status-codes";
-import { prisma } from "../prisma";
 import {
   create,
   deleteUnique,
@@ -11,7 +10,7 @@ import {
 import { createCategoryType } from "../types/category";
 import ApiError from "../utils/ApiError";
 
-export const categoryService = {
+ const categoryService = {
   getCategories: async () => {
     try {
       const categories = await findMany();
@@ -127,3 +126,6 @@ export const categoryService = {
     }
   },
 };
+
+
+export default categoryService;

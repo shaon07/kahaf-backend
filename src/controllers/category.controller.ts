@@ -1,9 +1,8 @@
 import expressAsyncHandler from "express-async-handler";
-import { prisma } from "../prisma";
 import ApiError from "../utils/ApiError";
 import ApiResponse from "../utils/ApiResponse";
 import { Request, Response } from "express";
-import { categoryService } from "../services/category.service";
+import { categoryService } from "../services";
 
 export const getCategories = expressAsyncHandler(
   async (req: Request, res: Response) => {
