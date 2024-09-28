@@ -4,6 +4,10 @@ import { StatusCodes } from "http-status-codes";
 import { productService } from "../services";
 import ApiError from "../utils/ApiError";
 import { DEFAULT_CATEGORY, DEFAULT_LIMIT, DEFAULT_PAGE } from "../constants";
+import { uploadOnCloudinary } from "../utils/cloudinary";
+import { createProductSchema } from "../schema/productSchema";
+import { ZodError } from "zod";
+import { zodErrorHandler } from "../utils/zodErrorHandler";
 
 export const getProducts = expressAsyncHandler(async (req, res) => {
   const {
@@ -48,17 +52,39 @@ export const getProduct = expressAsyncHandler(async (req, res) => {
 });
 
 export const createProduct = expressAsyncHandler(async (req, res) => {
-  const payload = req.body;
+  try {
+    const payload = req.body;
 
-  const product = await productService.createProduct(payload);
+    const localPath = req?.file?.path;
 
-  res.status(201).json(
-    new ApiResponse({
-      data: product,
-      message: "Product created successfully",
-      statusCode: StatusCodes.CREATED,
-    })
-  );
+    createProductSchema.parse({ ...req.body, image: localPath });
+
+    const productImage = await uploadOnCloudinary(localPath);
+
+    if (!productImage?.url) {
+      throw new ApiError({
+        message: "Failed to upload image to cloudinary",
+        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      });
+    }
+
+    const productData = {
+      ...payload,
+      image: productImage?.url,
+    };
+
+    const product = await productService.createProduct(productData);
+
+    res.status(201).json(
+      new ApiResponse({
+        data: product,
+        message: "Product created successfully",
+        statusCode: StatusCodes.CREATED,
+      })
+    );
+  } catch (error: any) {
+    zodErrorHandler(error);
+  }
 });
 
 export const updateProduct = expressAsyncHandler(async (req, res) => {

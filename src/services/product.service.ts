@@ -8,6 +8,7 @@ import {
   findUnique,
   update,
 } from "../repository/product.repo";
+import { createProductSchema } from "../schema/productSchema";
 
 const productService = {
   getProducts: async ({ category, page, take }: findManyType = {}) => {

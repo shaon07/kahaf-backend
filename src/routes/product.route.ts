@@ -11,13 +11,17 @@ import {
   createProductSchema,
   updateProductSchema,
 } from "../schema/productSchema";
+import { upload } from "../middlewares/multer.middleware";
 
 const router = Router();
 
 router
   .route("/")
   .get(getProducts)
-  .post(validateData(createProductSchema), createProduct);
+  .post(
+    upload.single("image"),
+    createProduct
+  );
 router
   .route("/:id")
   .get(getProduct)
