@@ -1,14 +1,35 @@
 import { StatusCodes } from "http-status-codes";
 import { prisma } from "../prisma";
-import { createCategoryType } from "../types/category";
+import { createCategoryType, findManyType } from "../types/category";
 import ApiError from "../utils/ApiError";
+import { DEFAULT_CATEGORY, DEFAULT_LIMIT, DEFAULT_PAGE } from "../constants";
 
-export const findMany = async () => {
-  return await prisma.category.findMany();
+export const findMany = async ({
+  page = DEFAULT_PAGE,
+  take = DEFAULT_LIMIT,
+  products = DEFAULT_CATEGORY,
+}: findManyType = {}) => {
+  const categories = await prisma.category.findMany({
+    skip: (page - 1) * take,
+    take: take,
+    include: {
+      products: products ? true : false,
+    },
+  });
+
+  const totalCategories = await prisma.category.count();
+  return {
+    categories,
+    totalPages: Math.ceil(totalCategories / take),
+    currentPage: page,
+  };
 };
 
-export const findUnique = async (id: string) => {
-  return await prisma.category.findUnique({ where: { id } });
+export const findUnique = async (id: string, products = 0) => {
+  return await prisma.category.findUnique({
+    where: { id },
+    include: { products: products ? true : false },
+  });
 };
 
 export const findByName = async (name: string) => {

@@ -7,20 +7,13 @@ import {
   findUnique,
   update,
 } from "../repository/category.repo";
-import { createCategoryType } from "../types/category";
+import { createCategoryType, findManyType } from "../types/category";
 import ApiError from "../utils/ApiError";
 
- const categoryService = {
-  getCategories: async () => {
+const categoryService = {
+  getCategories: async ({ page, take,products }: findManyType = {}) => {
     try {
-      const categories = await findMany();
-
-      if (categories?.length <= 0) {
-        throw new ApiError({
-          message: "Categories not found",
-          statusCode: 404,
-        });
-      }
+      const categories = await findMany({ page, take,products });
 
       return categories;
     } catch (error: any) {
@@ -31,9 +24,9 @@ import ApiError from "../utils/ApiError";
     }
   },
 
-  getCategory: async (id: string) => {
+  getCategory: async (id: string, products = 0) => {
     try {
-      const category = await findUnique(id);
+      const category = await findUnique(id,products);
 
       if (!category) {
         throw new ApiError({
@@ -126,6 +119,5 @@ import ApiError from "../utils/ApiError";
     }
   },
 };
-
 
 export default categoryService;

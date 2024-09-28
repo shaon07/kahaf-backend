@@ -3,10 +3,16 @@ import ApiError from "../utils/ApiError";
 import ApiResponse from "../utils/ApiResponse";
 import { Request, Response } from "express";
 import { categoryService } from "../services";
+import { DEFAULT_CATEGORY, DEFAULT_LIMIT, DEFAULT_PAGE } from "../constants";
 
 export const getCategories = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const categories = await categoryService.getCategories();
+    const { page = DEFAULT_PAGE, take = DEFAULT_LIMIT, products=DEFAULT_CATEGORY } = req.query;
+    const categories = await categoryService.getCategories({
+      page: Number(page),
+      take: Number(take),
+      products: Number(products),
+    });
 
     res.status(200).json(
       new ApiResponse({
@@ -20,7 +26,8 @@ export const getCategories = expressAsyncHandler(
 export const getCategory = expressAsyncHandler(
   async (req: Request, res: Response) => {
     const id = req.params.id;
-    const category = await categoryService.getCategory(id);
+    const { products = DEFAULT_CATEGORY } = req.query;  
+    const category = await categoryService.getCategory(id, Number(products));
 
     res.status(200).json(
       new ApiResponse({
