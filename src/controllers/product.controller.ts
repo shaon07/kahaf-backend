@@ -3,18 +3,28 @@ import ApiResponse from "../utils/ApiResponse";
 import { StatusCodes } from "http-status-codes";
 import { productService } from "../services";
 import ApiError from "../utils/ApiError";
+import { DEFAULT_CATEGORY, DEFAULT_LIMIT, DEFAULT_PAGE } from "../constants";
 
 export const getProducts = expressAsyncHandler(async (req, res) => {
-  const category = req.query.category;
+  const {
+    category = DEFAULT_CATEGORY,
+    page = DEFAULT_PAGE,
+    take = DEFAULT_LIMIT,
+  } = req.query;
 
-  if (Number(category) < 0 || Number(category) > 1) {
+  if (Number(category || 0) < 0 || Number(category || 0) > 1) {
     throw new ApiError({
       message: "Invalid category params",
       statusCode: StatusCodes.BAD_REQUEST,
     });
   }
 
-  const productList = await productService.getProducts(Number(category));
+  const productList = await productService.getProducts({
+    category: Number(category),
+    page: Number(page),
+    take: Number(take),
+  });
+
   res.status(200).json(
     new ApiResponse({
       statusCode: 200,

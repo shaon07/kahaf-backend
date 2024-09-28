@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { createProductType, updateProductType } from "../types/product";
+import { createProductType, findManyType, updateProductType } from "../types/product";
 import ApiError from "../utils/ApiError";
 import {
   create,
@@ -10,9 +10,9 @@ import {
 } from "../repository/product.repo";
 
 const productService = {
-  getProducts: async (category = 0) => {
+  getProducts: async ({ category, page, take }: findManyType = {}) => {
     try {
-      const products = await findMany(category);
+      const products = await findMany({ category, page, take });
       return products;
     } catch (error: any) {
       throw new ApiError({
@@ -75,7 +75,6 @@ const productService = {
       });
     }
   },
-
   deleteProduct: async (id: string) => {
     try {
       if (!id) {

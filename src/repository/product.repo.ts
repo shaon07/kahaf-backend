@@ -1,6 +1,10 @@
 import { StatusCodes } from "http-status-codes";
 import { prisma } from "../prisma";
-import { createProductType, updateProductType } from "../types/product";
+import {
+  createProductType,
+  findManyType,
+  updateProductType,
+} from "../types/product";
 import ApiError from "../utils/ApiError";
 
 export const create = async (data: createProductType) => {
@@ -25,13 +29,20 @@ export const create = async (data: createProductType) => {
   }
 };
 
-export const findMany = async (category = 0) => {
+export const findMany = async ({
+  category = 0,
+  page = 1,
+  take = 10,
+}: findManyType = {}) => {
   try {
+    const skip = (page - 1) * take;
     const products = await prisma.product
       .findMany({
         include: {
           category: category ? true : false,
         },
+        skip: skip,
+        take: take,
       })
       .catch((err) => {
         throw new ApiError({
@@ -39,7 +50,13 @@ export const findMany = async (category = 0) => {
           statusCode: StatusCodes.BAD_REQUEST,
         });
       });
-    return products;
+
+    const totalProducts = await prisma.product.count();
+    return {
+      products,
+      totalPages: Math.ceil(totalProducts / take),
+      currentPage: page,
+    };
   } catch (error: any) {
     throw new ApiError({
       message: error.message,
