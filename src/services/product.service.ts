@@ -1,5 +1,9 @@
 import { StatusCodes } from "http-status-codes";
-import { createProductType, findManyType, updateProductType } from "../types/product";
+import {
+  createProductType,
+  findManyType,
+  updateProductType,
+} from "../types/product";
 import ApiError from "../utils/ApiError";
 import {
   create,
@@ -8,7 +12,9 @@ import {
   findUnique,
   update,
 } from "../repository/product.repo";
+import { uploadOnCloudinary } from "../utils/cloudinary";
 import { createProductSchema } from "../schema/productSchema";
+import { zodErrorHandler } from "../utils/zodErrorHandler";
 
 const productService = {
   getProducts: async ({ category, page, take }: findManyType = {}) => {
@@ -43,6 +49,18 @@ const productService = {
   },
   createProduct: async (data: createProductType) => {
     try {
+      createProductSchema.parse(data);
+      const productImage = await uploadOnCloudinary(data.image);
+
+      if (!productImage?.url) {
+        throw new ApiError({
+          message: "Failed to upload image to cloudinary",
+          statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        });
+      }
+
+      data.image = productImage?.url;
+
       const product = await create(data);
 
       if (!product?.id) {
@@ -51,18 +69,26 @@ const productService = {
 
       return product;
     } catch (error: any) {
-      throw new ApiError({
-        message: error.message,
-        statusCode: StatusCodes.BAD_REQUEST,
-      });
+      zodErrorHandler(error);
     }
   },
   updateProduct: async (id: string, data: updateProductType, category = 0) => {
     try {
+      if (data?.image) {
+        const image = await uploadOnCloudinary(data.image);
+
+        if (!image?.url) {
+          throw Error("Failed to upload image to cloudinary");
+        }
+
+        data.image = image?.url;
+      }
+
       const existingProduct = await findUnique(id);
       if (!existingProduct?.id) {
         throw Error("Product not found");
       }
+
       const product = await update(id, data, category);
       if (!product?.id) {
         throw Error("Product not updated");

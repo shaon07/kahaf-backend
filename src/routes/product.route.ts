@@ -15,17 +15,15 @@ import { upload } from "../middlewares/multer.middleware";
 
 const router = Router();
 
-router
-  .route("/")
-  .get(getProducts)
-  .post(
-    upload.single("image"),
-    createProduct
-  );
+router.route("/").get(getProducts).post(upload.single("image"), createProduct);
 router
   .route("/:id")
   .get(getProduct)
-  .patch(validateData(updateProductSchema), updateProduct)
+  .patch(
+    upload.single("image"),
+    validateData(updateProductSchema),
+    updateProduct
+  )
   .delete(deleteProduct);
 
 export default router;

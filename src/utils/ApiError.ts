@@ -1,4 +1,4 @@
-type ApiErrorType = {
+export type ApiErrorType = {
   statusCode: number;
   message: string;
   success?: 'fail' | 'success';
