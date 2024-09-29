@@ -74,6 +74,11 @@ const productService = {
   },
   updateProduct: async (id: string, data: updateProductType, category = 0) => {
     try {
+      const existingProduct = await findUnique(id);
+      if (!existingProduct?.id) {
+        throw Error("Product not found");
+      }
+
       if (data?.image) {
         const image = await uploadOnCloudinary(data.image);
 
@@ -82,11 +87,6 @@ const productService = {
         }
 
         data.image = image?.url;
-      }
-
-      const existingProduct = await findUnique(id);
-      if (!existingProduct?.id) {
-        throw Error("Product not found");
       }
 
       const product = await update(id, data, category);
@@ -105,10 +105,7 @@ const productService = {
   deleteProduct: async (id: string) => {
     try {
       if (!id) {
-        throw new ApiError({
-          message: "Id is required",
-          statusCode: StatusCodes.BAD_REQUEST,
-        });
+        throw Error("Id is required");
       }
 
       const existingProduct = await findUnique(id);

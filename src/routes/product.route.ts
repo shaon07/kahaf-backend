@@ -7,10 +7,7 @@ import {
   updateProduct,
 } from "../controllers/product.controller";
 import { validateData } from "../middlewares/validationData";
-import {
-  createProductSchema,
-  updateProductSchema,
-} from "../schema/productSchema";
+import { updateProductSchema } from "../schema/productSchema";
 import { upload } from "../middlewares/multer.middleware";
 
 const router = Router();

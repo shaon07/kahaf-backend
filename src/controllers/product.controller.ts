@@ -4,10 +4,6 @@ import { StatusCodes } from "http-status-codes";
 import { productService } from "../services";
 import ApiError from "../utils/ApiError";
 import { DEFAULT_CATEGORY, DEFAULT_LIMIT, DEFAULT_PAGE } from "../constants";
-import { uploadOnCloudinary } from "../utils/cloudinary";
-import { createProductSchema } from "../schema/productSchema";
-import { ZodError } from "zod";
-import { zodErrorHandler } from "../utils/zodErrorHandler";
 
 export const getProducts = expressAsyncHandler(async (req, res) => {
   const {
