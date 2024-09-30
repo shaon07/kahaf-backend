@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
 }
 
 datasource db {
@@ -14,9 +15,21 @@ datasource db {
 }
 
 model User {
-  id    String  @id @default(uuid())
-  email String  @unique
-  name  String?
+  id        String @id @default(uuid())
+  email     String @unique
+  username  String @unique
+  password  String
+  phone     String
+  street    String
+  city      String
+  state     String
+  zipCode   String
+  country   String
+  firstName String
+  lastName  String
+  image     String?
+
+  @@index([email, username])
 }
 
 model Product {
@@ -31,6 +44,6 @@ model Product {
 
 model Category {
   id       String    @id @default(uuid())
-  name     String @unique
+  name     String    @unique
   products Product[]
 }

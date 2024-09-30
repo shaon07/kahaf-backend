@@ -2,7 +2,10 @@ import { ZodError } from "zod";
 import ApiError from "./ApiError";
 import { StatusCodes } from "http-status-codes";
 
-export const zodErrorHandler = (error: Error) => {
+export const zodErrorHandler = (
+  error: Error,
+  code = StatusCodes.BAD_REQUEST
+) => {
   if (error instanceof ZodError) {
     const errorMessages = error.errors.map((issue: any) => ({
       message: `${issue.path.join(".")} is ${issue.message}`,
@@ -14,7 +17,7 @@ export const zodErrorHandler = (error: Error) => {
     });
   } else {
     throw new ApiError({
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      statusCode: code,
       message: error.message,
     });
   }
