@@ -38,15 +38,18 @@ export const findUnique = async (id: string) => {
   return user;
 };
 
-export const findOne = async (data: { email: string; username: string }) => {
+export const findOne = async (data: {
+  email: string;
+  username?: string;
+  omit?: { password?: boolean };
+}) => {
+  const omit = data?.omit ?? { password: true };
   const user = await prisma.user
     .findFirst({
       where: {
         OR: [{ email: data.email }, { username: data.username }],
       },
-      omit: {
-        password: true,
-      },
+      omit: omit,
     })
     .catch((err) => {
       throw Error(err.message);
@@ -76,6 +79,7 @@ export const update = async (id: string, data: updateUserType) => {
       data: data,
       omit: {
         password: true,
+        refreshToken: true,
       },
     })
     .catch((err) => {

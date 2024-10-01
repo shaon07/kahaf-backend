@@ -14,7 +14,11 @@ export const userSchema = z.object({
   zipCode: z.coerce.string().max(255),
   country: z.string().max(255),
   image: z.string().optional(),
+  refreshToken: z.string().optional(),
+  accessToken: z.string().optional(),
+  role: z.enum(["ADMIN", "USER", "SUPERADMIN"]),
 });
 
 export const createUserSchema = userSchema.omit({ id: true });
 export const updateUserSchema = userSchema.omit({ id: true }).partial();
+export const loginUserSchema = userSchema.pick({ email: true, password: true });

@@ -3,10 +3,11 @@ import { userService } from "../services";
 import { StatusCodes } from "http-status-codes";
 import ApiResponse from "../utils/ApiResponse";
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from "../constants";
+import { cookieConfig } from "../configs";
 
 export const getAllUsers = expressAsyncHandler(async (req, res) => {
   const { page = DEFAULT_PAGE, take = DEFAULT_LIMIT } = req.query;
-  
+
   const users = await userService.getAllUser(Number(page), Number(take));
   res.status(StatusCodes.OK).json(
     new ApiResponse({
@@ -62,6 +63,19 @@ export const deleteUser = expressAsyncHandler(async (req, res) => {
     new ApiResponse({
       data: user,
       message: "User deleted successfully",
+      statusCode: StatusCodes.OK,
+    })
+  );
+});
+
+export const loginUser = expressAsyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  const user = await userService.loginUser(email, password);
+  res.cookie("token", user.accessToken, cookieConfig);
+  res.status(StatusCodes.OK).json(
+    new ApiResponse({
+      data: user,
+      message: "User logged in successfully",
       statusCode: StatusCodes.OK,
     })
   );
