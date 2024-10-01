@@ -12,13 +12,13 @@ import ApiError from "../utils/ApiError";
 import { createUserType, updateUserType } from "../types/user";
 import { createUserSchema } from "../schema/userSchema";
 import { zodErrorHandler } from "../utils/zodErrorHandler";
-import { SALT } from "../constants";
+import { DEFAULT_LIMIT, DEFAULT_PAGE, SALT } from "../constants";
 import { uploadOnCloudinary } from "../utils/cloudinary";
 
 const userService = {
-  getAllUser: async () => {
+  getAllUser: async (page: number = DEFAULT_PAGE, take: number = DEFAULT_LIMIT) => {
     try {
-      const users = await findMany();
+      const users = await findMany(page, take);
       return users;
     } catch (error: any) {
       throw new ApiError({

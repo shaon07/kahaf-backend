@@ -2,9 +2,12 @@ import expressAsyncHandler from "express-async-handler";
 import { userService } from "../services";
 import { StatusCodes } from "http-status-codes";
 import ApiResponse from "../utils/ApiResponse";
+import { DEFAULT_LIMIT, DEFAULT_PAGE } from "../constants";
 
 export const getAllUsers = expressAsyncHandler(async (req, res) => {
-  const users = await userService.getAllUser();
+  const { page = DEFAULT_PAGE, take = DEFAULT_LIMIT } = req.query;
+  
+  const users = await userService.getAllUser(Number(page), Number(take));
   res.status(StatusCodes.OK).json(
     new ApiResponse({
       data: users,

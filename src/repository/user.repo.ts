@@ -1,13 +1,27 @@
+import { DEFAULT_LIMIT, DEFAULT_PAGE } from "../constants";
 import { prisma } from "../prisma";
 import { createUserType, updateUserType } from "../types/user";
 
-export const findMany = async () => {
+export const findMany = async (
+  page: number = DEFAULT_PAGE,
+  take: number = DEFAULT_LIMIT
+) => {
   const users = await prisma.user.findMany({
     omit: {
       password: true,
     },
+    skip: (page - 1) * take,
+    take: take,
   });
-  return users;
+
+  const totalUsers = await prisma.user.count();
+
+  const totalPages = Math.ceil(totalUsers / take);
+  return {
+    users,
+    totalPages,
+    currentPage: page,
+  };
 };
 
 export const findUnique = async (id: string) => {
