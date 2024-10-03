@@ -9,20 +9,17 @@ export const findMany = async ({
   take = DEFAULT_LIMIT,
   products = DEFAULT_CATEGORY,
 }: findManyType = {}) => {
-  const categories = await prisma.category.findMany({
-    skip: (page - 1) * take,
-    take: take,
+  const categories = await prisma.category.paginate({
     include: {
       products: products ? true : false,
-    },
+    }
+  }).withPages({
+    page: page,
+    limit: take,
+    includePageCount: true,
   });
 
-  const totalCategories = await prisma.category.count();
-  return {
-    categories,
-    totalPages: Math.ceil(totalCategories / take),
-    currentPage: page,
-  };
+  return categories;
 };
 
 export const findUnique = async (id: string, products = 0) => {

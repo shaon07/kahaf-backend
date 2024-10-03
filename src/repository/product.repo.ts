@@ -35,28 +35,17 @@ export const findMany = async ({
   take = 10,
 }: findManyType = {}) => {
   try {
-    const skip = (page - 1) * take;
-    const products = await prisma.product
-      .findMany({
-        include: {
-          category: category ? true : false,
-        },
-        skip: skip,
-        take: take,
-      })
-      .catch((err) => {
-        throw new ApiError({
-          message: err.meta.cause,
-          statusCode: StatusCodes.BAD_REQUEST,
-        });
-      });
+    const products = await prisma.product.paginate({
+      include: {
+        category: category ? true : false,
+      },
+    }).withPages({
+      page: page,
+      limit: take,
+      includePageCount: true,
+    });
 
-    const totalProducts = await prisma.product.count();
-    return {
-      products,
-      totalPages: Math.ceil(totalProducts / take),
-      currentPage: page,
-    };
+    return products;
   } catch (error: any) {
     throw new ApiError({
       message: error.message,

@@ -6,22 +6,20 @@ export const findMany = async (
   page: number = DEFAULT_PAGE,
   take: number = DEFAULT_LIMIT
 ) => {
-  const users = await prisma.user.findMany({
-    omit: {
-      password: true,
-    },
-    skip: (page - 1) * take,
-    take: take,
-  });
+  const users = await prisma.user
+    .paginate({
+      omit: {
+        password: true,
+        accessToken: true,
+      },
+    })
+    .withPages({
+      page: page,
+      limit: take,
+      includePageCount: true,
+    });
 
-  const totalUsers = await prisma.user.count();
-
-  const totalPages = Math.ceil(totalUsers / take);
-  return {
-    users,
-    totalPages,
-    currentPage: page,
-  };
+  return users;
 };
 
 export const findUnique = async (id: string) => {
