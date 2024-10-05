@@ -4,6 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import ApiResponse from "../utils/ApiResponse";
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from "../constants";
 import { cookieConfig } from "../configs";
+import ApiError from "../utils/ApiError";
 
 export const getAllUsers = expressAsyncHandler(async (req, res) => {
   const { page = DEFAULT_PAGE, take = DEFAULT_LIMIT } = req.query;
@@ -72,6 +73,7 @@ export const loginUser = expressAsyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await userService.loginUser(email, password);
   res.cookie("accessToken", user.accessToken, cookieConfig);
+  res.cookie("refreshToken", user.refreshToken, cookieConfig);
   res.status(StatusCodes.OK).json(
     new ApiResponse({
       data: user,
@@ -88,12 +90,34 @@ export const logout = expressAsyncHandler(async (req, res) => {
 
   res.clearCookie("accessToken");
   res.clearCookie("refreshToken");
-  res.clearCookie("token");
   res.status(StatusCodes.OK).json(
     new ApiResponse({
       message: "User logged out successfully",
       statusCode: StatusCodes.OK,
       data: {},
+    })
+  );
+});
+
+export const refreshToken = expressAsyncHandler(async (req, res) => {
+  const { refreshToken } = req.body;
+  const token = req.cookies.refreshToken;
+
+  if(!token && !refreshToken) {
+    throw new ApiError({
+      message: "Invalid refresh token",
+      statusCode: StatusCodes.UNAUTHORIZED,
+    });
+  }
+
+  const user = await userService.refreshToken(token || refreshToken);
+  res.cookie("accessToken", user.accessToken, cookieConfig);
+  res.cookie("refreshToken", user.refreshToken, cookieConfig);
+  res.status(StatusCodes.OK).json(
+    new ApiResponse({
+      data: user,
+      message: "User token refreshed successfully",
+      statusCode: StatusCodes.OK,
     })
   );
 })

@@ -7,6 +7,7 @@ import {
   getUser,
   loginUser,
   logout,
+  refreshToken,
   updateUser,
 } from "../controllers/user.controller";
 import { validateData } from "../middlewares/validationData";
@@ -18,6 +19,7 @@ const router = Router();
 router.route("/").get(verifyJWT,getAllUsers);
 router.route("/detail").get(verifyJWT, getUser);
 router.route("/register").post(upload.single("image"), createUser);
+router.route('/refresh-token').post(refreshToken)
 router
   .route("/login")
   .post(upload.none(), validateData(loginUserSchema), loginUser);

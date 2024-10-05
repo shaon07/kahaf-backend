@@ -180,7 +180,7 @@ const userService = {
         throw Error("User not updated");
       }
 
-      return { ...updatedUser, accessToken };
+      return { ...updatedUser, accessToken, refreshToken };
     } catch (error: any) {
       throw new ApiError({
         message: error.message,
@@ -197,6 +197,55 @@ const userService = {
       }
 
       return user;
+    } catch (error: any) {
+      throw new ApiError({
+        message: error.message,
+        statusCode: StatusCodes.BAD_REQUEST,
+      });
+    }
+  },
+  refreshToken: async (refreshToken: string) => {
+    try {
+      if (!refreshToken) {
+        throw Error("Refresh token is required");
+      }
+
+      const user = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET!);
+
+      if (typeof user === "object" && user !== null) {
+        if (!user.id) {
+          throw Error("User not found");
+        }
+
+        const accessToken = jwt.sign(
+          {
+            id: user?.id,
+            email: user?.email,
+            role: user?.role,
+            username: user?.username,
+          },
+          ACCESS_TOKEN_SECRET!,
+          {
+            expiresIn: ACCESS_TOKEN_SECRET_EXPIRE_IN!,
+          }
+        );
+
+        const refreshToken = jwt.sign(
+          {
+            id: user?.id,
+          },
+          REFRESH_TOKEN_SECRET!,
+          {
+            expiresIn: REFRESH_TOKEN_SECRET_EXPIRE_IN!,
+          }
+        );
+
+        const updatedUser = await update(user?.id, { refreshToken });
+
+        return { ...updatedUser, accessToken, refreshToken };
+      } else {
+        throw Error("Invalid token");
+      }
     } catch (error: any) {
       throw new ApiError({
         message: error.message,
