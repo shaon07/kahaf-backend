@@ -15,7 +15,7 @@ import verifyJWT from "../middlewares/verify-jwt";
 
 const router = Router();
 
-router.route("/").get(getAllUsers);
+router.route("/").get(verifyJWT,getAllUsers);
 router.route("/detail").get(verifyJWT, getUser);
 router.route("/register").post(upload.single("image"), createUser);
 router
