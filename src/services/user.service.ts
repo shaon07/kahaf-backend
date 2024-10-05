@@ -174,13 +174,29 @@ const userService = {
         }
       );
 
-      const updatedUser = await update(user?.id, { accessToken, refreshToken });
+      const updatedUser = await update(user?.id, { refreshToken });
 
       if (!updatedUser?.id) {
         throw Error("User not updated");
       }
 
-      return updatedUser;
+      return { ...updatedUser, accessToken };
+    } catch (error: any) {
+      throw new ApiError({
+        message: error.message,
+        statusCode: StatusCodes.BAD_REQUEST,
+      });
+    }
+  },
+  logoutUser: async (id: string) => {
+    try {
+      const user = await update(id, { refreshToken: undefined });
+
+      if (!user?.id) {
+        throw Error("User not updated");
+      }
+
+      return user;
     } catch (error: any) {
       throw new ApiError({
         message: error.message,

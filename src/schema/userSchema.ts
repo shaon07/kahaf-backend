@@ -16,7 +16,7 @@ export const userSchema = z.object({
   image: z.string().optional(),
   refreshToken: z.string().optional(),
   accessToken: z.string().optional(),
-  role: z.enum(["ADMIN", "USER", "SUPERADMIN"]),
+  role: z.enum(["ADMIN", "USER", "SUPERADMIN"]).default("USER"),
 });
 
 export const createUserSchema = userSchema.omit({ id: true });

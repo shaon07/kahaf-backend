@@ -35,8 +35,7 @@ model User {
   lastName     String
   image        String?
   role         Role    @default(USER)
-  refreshToken String?
-  accessToken  String?
+  refreshToken  String? @db.Text
 
   @@index([email, username])
 }

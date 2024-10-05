@@ -10,7 +10,7 @@ export const findMany = async (
     .paginate({
       omit: {
         password: true,
-        accessToken: true,
+        refreshToken: true,
       },
     })
     .withPages({
@@ -28,6 +28,7 @@ export const findUnique = async (id: string) => {
       where: { id },
       omit: {
         password: true,
+        refreshToken: true,
       },
     })
     .catch((err) => {
@@ -62,6 +63,7 @@ export const create = async (data: createUserType) => {
       data: data,
       omit: {
         password: true,
+        refreshToken: true,
       },
     })
     .catch((err) => {
@@ -81,6 +83,7 @@ export const update = async (id: string, data: updateUserType) => {
       },
     })
     .catch((err) => {
+      console.log(err);
       throw Error(err.message);
     });
   return user;
@@ -92,6 +95,7 @@ export const deleteUnique = async (id: string) => {
       where: { id },
       omit: {
         password: true,
+        refreshToken: true,
       },
     })
     .catch((err) => {

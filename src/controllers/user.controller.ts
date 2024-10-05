@@ -19,7 +19,7 @@ export const getAllUsers = expressAsyncHandler(async (req, res) => {
 });
 
 export const getUser = expressAsyncHandler(async (req, res) => {
-  const id = req.params.id;
+  const id = req.user.id;
   const user = await userService.getUser(id);
   res.status(StatusCodes.OK).json(
     new ApiResponse({
@@ -71,7 +71,7 @@ export const deleteUser = expressAsyncHandler(async (req, res) => {
 export const loginUser = expressAsyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await userService.loginUser(email, password);
-  res.cookie("token", user.accessToken, cookieConfig);
+  res.cookie("accessToken", user.accessToken, cookieConfig);
   res.status(StatusCodes.OK).json(
     new ApiResponse({
       data: user,
@@ -80,3 +80,20 @@ export const loginUser = expressAsyncHandler(async (req, res) => {
     })
   );
 });
+
+export const logout = expressAsyncHandler(async (req, res) => {
+
+  const id = req.user.id;
+  await userService.logoutUser(id);
+
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+  res.clearCookie("token");
+  res.status(StatusCodes.OK).json(
+    new ApiResponse({
+      message: "User logged out successfully",
+      statusCode: StatusCodes.OK,
+      data: {},
+    })
+  );
+})
