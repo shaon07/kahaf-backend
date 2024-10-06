@@ -10,13 +10,11 @@ export const findMany = async ({
   products = DEFAULT_CATEGORY,
 }: findManyType = {}) => {
   const categories = await prisma.category.paginate({
+    page,
+    limit: take,
     include: {
       products: products ? true : false,
-    }
-  }).withPages({
-    page: page,
-    limit: take,
-    includePageCount: true,
+    },
   });
 
   return categories;

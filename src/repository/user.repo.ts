@@ -6,18 +6,14 @@ export const findMany = async (
   page: number = DEFAULT_PAGE,
   take: number = DEFAULT_LIMIT
 ) => {
-  const users = await prisma.user
-    .paginate({
-      omit: {
-        password: true,
-        refreshToken: true,
-      },
-    })
-    .withPages({
-      page: page,
-      limit: take,
-      includePageCount: true,
-    });
+  const users = await prisma.user.paginate({
+    page,
+    limit: take,
+    omit: {
+      password: true,
+      refreshToken: true,
+    },
+  });
 
   return users;
 };

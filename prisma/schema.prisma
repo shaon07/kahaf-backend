@@ -48,10 +48,30 @@ model Product {
   category    Category @relation(fields: [categoryID], references: [id])
   categoryID  String
   image       String?
+  created_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
+
+  @@index([categoryID])
 }
 
 model Category {
   id       String    @id @default(uuid())
   name     String    @unique
   products Product[]
+}
+
+
+model Cart {
+  id String @id @default(uuid())
+  userID String
+  date DateTime @default(now())
+  products  CartItem[]
+}
+
+model CartItem {
+  id          String   @id @default(uuid())
+  productID  String
+  quantity    Int      @default(1)
+  cart      Cart     @relation(fields: [cartID], references: [id])
+  cartID String
 }
