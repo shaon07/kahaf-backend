@@ -39,3 +39,28 @@ export const createCart = expressAsyncHandler(async (req, res) => {
     })
   );
 });
+
+export const updateCart = expressAsyncHandler(async (req, res) => {
+  const data = req.body;
+  const id = req.params.id;
+  const cart = await cartService.updateCart(id, data);
+
+  res.status(200).json(
+    new ApiResponse({
+      data: cart,
+      message: "Cart updated successfully",
+    })
+  );
+});
+
+export const deleteCart = expressAsyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const cart = await cartService.deleteCart(id);
+
+  res.status(200).json(
+    new ApiResponse({
+      data: cart,
+      message: "Cart deleted successfully",
+    })
+  );
+});

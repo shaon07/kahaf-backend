@@ -9,3 +9,5 @@ export const cartSchema = z.object({
   userID: z.string().uuid(),
   products: z.array(productSchema),
 });
+
+export const updateCartSchema = cartSchema.omit({ userID: true });

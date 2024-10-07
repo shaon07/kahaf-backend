@@ -1,9 +1,15 @@
 import { StatusCodes } from "http-status-codes";
 import ApiError from "../utils/ApiError";
-import { create, findMany, findUnique } from "../repository/cart.repo";
+import {
+  create,
+  deleteUnique,
+  findMany,
+  findUnique,
+  update,
+} from "../repository/cart.repo";
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from "../constants";
-import { cartType } from "../types/cart";
-import { cartSchema } from "../schema/cartSchema";
+import { cartType, updateCartType } from "../types/cart";
+import { cartSchema, updateCartSchema } from "../schema/cartSchema";
 import { zodErrorHandler } from "../utils/zodErrorHandler";
 
 const cartService = {
@@ -40,6 +46,46 @@ const cartService = {
       return cart;
     } catch (error: any) {
       zodErrorHandler(error);
+    }
+  },
+  updateCart: async (id: string, data: updateCartType) => {
+    try {
+      const existingCart = await findUnique(id);
+      if (!existingCart?.id) {
+        throw Error("Cart not found");
+      }
+
+      updateCartSchema.parse(data);
+      const cart = await update(id, data);
+
+      if (!cart?.id) {
+        throw Error("Cart not updated");
+      }
+
+      return cart;
+    } catch (error: any) {
+      zodErrorHandler(error);
+    }
+  },
+  deleteCart: async (id: string) => {
+    try {
+      const existingCart = await findUnique(id);
+      if (!existingCart?.id) {
+        throw Error("Cart not found");
+      }
+
+      const cart = await deleteUnique(id);
+
+      if (!cart?.id) {
+        throw Error("Cart not deleted");
+      }
+
+      return cart;
+    } catch (error: any) {
+      throw new ApiError({
+        message: error.message,
+        statusCode: StatusCodes.BAD_REQUEST,
+      });
     }
   },
 };
