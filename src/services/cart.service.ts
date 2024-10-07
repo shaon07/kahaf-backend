@@ -4,6 +4,7 @@ import {
   create,
   deleteUnique,
   findMany,
+  findOne,
   findUnique,
   update,
 } from "../repository/cart.repo";
@@ -79,6 +80,18 @@ const cartService = {
       if (!cart?.id) {
         throw Error("Cart not deleted");
       }
+
+      return cart;
+    } catch (error: any) {
+      throw new ApiError({
+        message: error.message,
+        statusCode: StatusCodes.BAD_REQUEST,
+      });
+    }
+  },
+  userCart: async (id: string, page = DEFAULT_PAGE, take = DEFAULT_LIMIT) => {
+    try {
+      const cart = await findOne({ userID: id }, page, take);
 
       return cart;
     } catch (error: any) {

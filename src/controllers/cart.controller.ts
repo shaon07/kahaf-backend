@@ -64,3 +64,16 @@ export const deleteCart = expressAsyncHandler(async (req, res) => {
     })
   );
 });
+
+export const userCarts = expressAsyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const { page = DEFAULT_PAGE, take = DEFAULT_LIMIT } = req.query;
+  const carts = await cartService.userCart(id, Number(page), Number(take));
+
+  res.status(200).json(
+    new ApiResponse({
+      data: carts,
+      message: "Carts fetched successfully",
+    })
+  );
+});

@@ -96,3 +96,26 @@ export const deleteUnique = async (id: string) => {
     throw Error(error.message);
   }
 };
+
+export const findOne = async (
+  data: { userID?: string; cartID?: string },
+  page = DEFAULT_PAGE,
+  take = DEFAULT_LIMIT
+) => {
+  try {
+    const cart = await prisma.cart.paginate({
+      where: {
+        OR: [{ userID: data.userID }, { id: data.cartID }],
+      },
+      include: {
+        products: true,
+      },
+      limit: take,
+      page: page,
+    });
+
+    return cart;
+  } catch (error: any) {
+    throw Error(error.message);
+  }
+};
