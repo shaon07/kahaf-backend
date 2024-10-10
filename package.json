@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "nodemon",
-    "devSql": "npx ts-node ./src/prisma.ts"
+    "devSql": "npx ts-node ./src/prisma.ts",
+    "build":"tsc"
   },
   "keywords": [],
   "author": "",
