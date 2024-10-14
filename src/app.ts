@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.json());
-app.use(cors({ origin: "*" }));
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
