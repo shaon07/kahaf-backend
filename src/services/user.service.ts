@@ -4,16 +4,12 @@ import { StatusCodes } from "http-status-codes";
 import {
   create,
   deleteUnique,
-  findMany,
   findOne,
   findUnique,
   update,
 } from "../repository/user.repo";
 import ApiError from "../utils/ApiError";
-import { createUserType, updateUserType } from "../types/user";
-import { createUserSchema } from "../schema/userSchema";
 import { zodErrorHandler } from "../utils/zodErrorHandler";
-import { DEFAULT_LIMIT, DEFAULT_PAGE, SALT } from "../constants";
 import { uploadOnCloudinary } from "../utils/cloudinary";
 import {
   ACCESS_TOKEN_SECRET,
@@ -21,22 +17,11 @@ import {
   REFRESH_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET_EXPIRE_IN,
 } from "../secrets";
+import { UpdateUserType, UserType } from "../types/user";
+import { userSchema } from "../schema/user.schema";
+import { SALT } from "../constants";
 
 const userService = {
-  getAllUser: async (
-    page: number = DEFAULT_PAGE,
-    take: number = DEFAULT_LIMIT
-  ) => {
-    try {
-      const users = await findMany(page, take);
-      return users;
-    } catch (error: any) {
-      throw new ApiError({
-        message: error.message,
-        statusCode: StatusCodes.BAD_REQUEST,
-      });
-    }
-  },
   getUser: async (id: string) => {
     try {
       const user = await findUnique(id);
@@ -53,9 +38,9 @@ const userService = {
       });
     }
   },
-  createUser: async (data: createUserType) => {
+  createUser: async (data: UserType) => {
     try {
-      createUserSchema.parse(data);
+      userSchema.parse(data);
       const existingUser = await findOne({
         email: data.email,
         username: data.username,
@@ -65,14 +50,14 @@ const userService = {
         throw Error("User already exists with this email or username");
       }
 
-      if (data?.image) {
-        const image = await uploadOnCloudinary(data.image);
+      if (data?.picture) {
+        const picture = await uploadOnCloudinary(data.picture);
 
-        if (!image?.url) {
+        if (!picture?.url) {
           throw Error("Failed to upload image to cloudinary");
         }
 
-        data.image = image?.url;
+        data.picture = picture?.url;
       }
 
       data.password = bcrypt.hashSync(data.password, SALT);
@@ -88,7 +73,7 @@ const userService = {
       zodErrorHandler(error);
     }
   },
-  updateUser: async (id: string, data: updateUserType) => {
+  updateUser: async (id: string, data: UpdateUserType) => {
     try {
       const existingUser = await findUnique(id);
 
@@ -96,14 +81,14 @@ const userService = {
         throw Error("User not found");
       }
 
-      if (data?.image) {
-        const image = await uploadOnCloudinary(data.image);
+      if (data?.picture) {
+        const picture = await uploadOnCloudinary(data.picture);
 
-        if (!image?.url) {
+        if (!picture?.url) {
           throw Error("Failed to upload image to cloudinary");
         }
 
-        data.image = image?.url;
+        data.picture = picture?.url;
       }
 
       const user = await update(id, data);
@@ -155,7 +140,6 @@ const userService = {
         {
           id: user?.id,
           email: user?.email,
-          role: user?.role,
           username: user?.username,
         },
         ACCESS_TOKEN_SECRET!,

@@ -2,22 +2,8 @@ import expressAsyncHandler from "express-async-handler";
 import { userService } from "../services";
 import { StatusCodes } from "http-status-codes";
 import ApiResponse from "../utils/ApiResponse";
-import { DEFAULT_LIMIT, DEFAULT_PAGE } from "../constants";
 import { cookieConfig } from "../configs";
 import ApiError from "../utils/ApiError";
-
-export const getAllUsers = expressAsyncHandler(async (req, res) => {
-  const { page = DEFAULT_PAGE, take = DEFAULT_LIMIT } = req.query;
-
-  const users = await userService.getAllUser(Number(page), Number(take));
-  res.status(StatusCodes.OK).json(
-    new ApiResponse({
-      data: users,
-      message: "Users fetched successfully",
-      statusCode: StatusCodes.OK,
-    })
-  );
-});
 
 export const getUser = expressAsyncHandler(async (req, res) => {
   const id = req.user.id;

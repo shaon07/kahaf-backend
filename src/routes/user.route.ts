@@ -3,7 +3,6 @@ import { Router } from "express";
 import {
   createUser,
   deleteUser,
-  getAllUsers,
   getUser,
   loginUser,
   logout,
@@ -11,22 +10,21 @@ import {
   updateUser,
 } from "../controllers/user.controller";
 import { validateData } from "../middlewares/validationData";
-import { loginUserSchema } from "../schema/userSchema";
 import verifyJWT from "../middlewares/verify-jwt";
+import { loginSchema } from "../schema/user.schema";
 
 const router = Router();
 
-router.route("/").get(verifyJWT,getAllUsers);
 router.route("/detail").get(verifyJWT, getUser);
-router.route("/register").post(upload.single("image"), createUser);
+router.route("/register").post(upload.single("picture"), createUser);
 router.route('/refresh-token').post(refreshToken)
 router
   .route("/login")
-  .post(upload.none(), validateData(loginUserSchema), loginUser);
+  .post(upload.none(), validateData(loginSchema), loginUser);
 router.route("/logout").get(verifyJWT, logout);
 router
   .route("/:id")
-  .patch(upload.single("image"), updateUser)
+  .patch(upload.single("picture"), updateUser)
   .delete(deleteUser);
 
 export default router;

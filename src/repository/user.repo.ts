@@ -1,22 +1,5 @@
-import { DEFAULT_LIMIT, DEFAULT_PAGE } from "../constants";
 import { prisma } from "../prisma";
-import { createUserType, updateUserType } from "../types/user";
-
-export const findMany = async (
-  page: number = DEFAULT_PAGE,
-  take: number = DEFAULT_LIMIT
-) => {
-  const users = await prisma.user.paginate({
-    page,
-    limit: take,
-    omit: {
-      password: true,
-      refreshToken: true,
-    },
-  });
-
-  return users;
-};
+import { UpdateUserType, UserType } from "../types/user";
 
 export const findUnique = async (id: string) => {
   const user = await prisma.user
@@ -44,7 +27,7 @@ export const findOne = async (data: {
       where: {
         OR: [{ email: data.email }, { username: data.username }],
       },
-      omit: omit,
+      omit,
     })
     .catch((err) => {
       throw Error(err.message);
@@ -53,26 +36,39 @@ export const findOne = async (data: {
   return user;
 };
 
-export const create = async (data: createUserType) => {
-  const user = await prisma.user
-    .create({
-      data: data,
-      omit: {
-        password: true,
-        refreshToken: true,
-      },
-    })
-    .catch((err) => {
-      throw Error(err.message);
-    });
+export const create = async (data: UserType) => {
+  const user = await prisma.user.create({
+    data: {
+      email: data.email,
+      username: data.username,
+      firstname: data.firstname,
+      lastname: data.lastname,
+      password: data.password,
+    },
+    omit: {
+      password: true,
+      refreshToken: true,
+    },
+  });
   return user;
 };
 
-export const update = async (id: string, data: updateUserType) => {
+export const update = async (id: string, data: UpdateUserType) => {
   const user = await prisma.user
     .update({
       where: { id },
-      data: data,
+      data: {
+        ...data,
+        socialLinks: {
+          upsert: data?.socialLinks
+            ? data?.socialLinks.map((socialLink) => ({
+                where: { id: socialLink.id },
+                create: socialLink,
+                update: socialLink,
+              }))
+            : [],
+        },
+      },
       omit: {
         password: true,
         refreshToken: true,
