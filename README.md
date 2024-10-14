@@ -1,9 +1,9 @@
-Here's a sample `README.md` for your `prisma-ecommerce` project. This document will provide an overview of your project, installation instructions, usage, and other important details that will help visitors understand your codebase:
+Here's a sample `README.md` for your `ts-node-api` project. This document will provide an overview of your project, installation instructions, usage, and other important details that will help visitors understand your codebase:
 
 ```markdown
-# prisma-ecommerce
-
-Welcome to the **prisma-ecommerce** project! This is a robust e-commerce application built using Node.js, Express, and Prisma. It is designed to manage products, handle user authentication, and facilitate payment processing with various features.
+# ts-node-api
+```
+Welcome to the **ts-node-api** project! This is a robust e-commerce application built using Node.js, Express, and Prisma. It is designed to manage products, handle user authentication, and facilitate payment processing with various features.
 
 ## Table of Contents
 
@@ -40,8 +40,8 @@ To get started with the project, follow these steps:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/prisma-ecommerce.git
-   cd prisma-ecommerce
+   git clone https://github.com/yourusername/ts-node-api.git
+   cd ts-node-api
    ```
 
 2. **Install dependencies:**
@@ -54,7 +54,14 @@ To get started with the project, follow these steps:
    ```plaintext
    DATABASE_URL=your_database_url
    CLOUDINARY_URL=your_cloudinary_url
-   JWT_SECRET=your_jwt_secret
+   PORT=your_jwt_secret
+   CLOUDINARY_CLOUD_NAME=your_jwt_secret
+   CLOUDINARY_API_SECRET=your_jwt_secret
+   CLOUDINARY_API_KEY=your_jwt_secret
+   ACCESS_TOKEN_SECRET=your_jwt_secret
+   ACCESS_TOKEN_SECRET_EXPIRE_IN=your_jwt_secret
+   REFRESH_TOKEN_SECRET=your_jwt_secret
+   REFRESH_TOKEN_SECRET_EXPIRE_IN=your_jwt_secret
    ```
 
 ## Usage
@@ -117,7 +124,7 @@ This project is licensed under the ISC License. See the [LICENSE](LICENSE) file 
 
 ---
 
-Thank you for checking out **prisma-ecommerce**! If you have any questions or suggestions, feel free to reach out.
+Thank you for checking out **ts-node-api**! If you have any questions or suggestions, feel free to reach out.
 ```
 
 ### Customization

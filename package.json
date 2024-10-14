@@ -1,5 +1,5 @@
 {
-  "name": "prisma-ecommerce",
+  "name": "ts-node-api",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
