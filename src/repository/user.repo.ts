@@ -62,12 +62,15 @@ export const update = async (id: string, data: UpdateUserType) => {
         socialLinks: {
           upsert: data?.socialLinks
             ? data?.socialLinks.map((socialLink) => ({
-                where: { id: socialLink.id },
+                where: { id: id },
                 create: socialLink,
                 update: socialLink,
               }))
             : [],
         },
+      },
+      include: {
+        socialLinks: true,
       },
       omit: {
         password: true,

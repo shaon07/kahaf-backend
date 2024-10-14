@@ -26,7 +26,7 @@ export const userSchema = z.object({
 });
 
 export const updateUserType = userSchema.partial();
-export const loginSchema = userSchema.pick({ username: true, password: true });
+export const loginSchema = userSchema.pick({ email: true, password: true });
 export const registerSchema = userSchema.pick({
   email: true,
   password: true,

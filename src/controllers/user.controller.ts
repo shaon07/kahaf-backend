@@ -32,7 +32,7 @@ export const createUser = expressAsyncHandler(async (req, res) => {
 
 export const updateUser = expressAsyncHandler(async (req, res) => {
   const payload = req.body;
-  payload.image = req?.file?.path;
+  payload.picture = req?.file?.path;
   const user = await userService.updateUser(req.params.id, payload);
   res.status(StatusCodes.OK).json(
     new ApiResponse({

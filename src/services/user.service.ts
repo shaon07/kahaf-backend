@@ -98,7 +98,12 @@ const userService = {
       }
 
       return user;
-    } catch (error: any) {}
+    } catch (error: any) {
+      throw new ApiError({
+        message: error.message,
+        statusCode: StatusCodes.BAD_REQUEST,
+      });
+    }
   },
   deleteUser: async (id: string) => {
     try {
