@@ -9,6 +9,9 @@ export const findUnique = async (id: string) => {
         password: true,
         refreshToken: true,
       },
+      include: {
+        socialLinks: true,
+      },
     })
     .catch((err) => {
       throw Error(err.message);
@@ -54,20 +57,35 @@ export const create = async (data: UserType) => {
 };
 
 export const update = async (id: string, data: UpdateUserType) => {
+  // @ts-ignore
+  const links = data.socialLinks && JSON.parse(data.socialLinks);
+  await Promise.all(
+    links.map(async (link: any) => {
+      return prisma.socialLink.updateMany({
+        where: { userId: id },
+        data: {
+          platform: link.platform,
+          url: link.url,
+        },
+      });
+    })
+  );
+
   const user = await prisma.user
     .update({
       where: { id },
       data: {
-        ...data,
-        socialLinks: {
-          upsert: data?.socialLinks
-            ? data?.socialLinks.map((socialLink) => ({
-                where: { id: id },
-                create: socialLink,
-                update: socialLink,
-              }))
-            : [],
-        },
+        email: data.email,
+        username: data.username,
+        firstname: data.firstname,
+        lastname: data.lastname,
+        picture: data.picture,
+        // socialLinks: {
+        //   updateMany: links.map((link: any) => ({
+        //     platform: link.platform,
+        //     url: link.url,
+        //   })),
+        // }
       },
       include: {
         socialLinks: true,

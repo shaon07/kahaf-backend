@@ -4,6 +4,7 @@ import router from "./routes";
 import { errorHandler } from "./middlewares/errorHandler";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
+import session from "express-session";
 
 const app = express();
 app.use(bodyParser.json());
@@ -13,6 +14,11 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
+app.use(session({
+  secret: 'gfg-key',
+  resave: false,
+  saveUninitialized: true
+}));
 
 // routes
 app.get("/", (req, res) => {

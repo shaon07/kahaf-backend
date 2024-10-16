@@ -55,11 +55,13 @@ export const deleteUser = expressAsyncHandler(async (req, res) => {
   );
 });
 
-export const loginUser = expressAsyncHandler(async (req, res) => {
+export const loginUser = expressAsyncHandler(async (req:any, res) => {
   const { email, password } = req.body;
   const user = await userService.loginUser(email, password);
-  res.cookie("accessToken", user.accessToken);
-  res.cookie("refreshToken", user.refreshToken);
+  req.session.accessToken = user.accessToken;
+  req.session.refreshToken = user.refreshToken;
+  // res.cookie("accessToken", user.accessToken);
+  // res.cookie("refreshToken", user.refreshToken);
   res.status(StatusCodes.OK).json(
     new ApiResponse({
       data: user,
